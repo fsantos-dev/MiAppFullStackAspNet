@@ -17,7 +17,7 @@ public interface IcategoryService
     // Obtener una categoria por su Id (Retorna categoryDto o null si no existe).
 
     Task<CategoryDto> CreateAsync(CreateCategoryDto createDto);
-    // Crear una categoria por su Id (Recibe CreateCategoryDto, retorna el CategoryDto actualizado o null).
+    // Crear una categoria por su Id (Recibe CreateCategoryDto, retorna el CategoryDto actualizado).
 
     Task<CategoryDto?> UpdateAsync(int id, UpdateCategoryDto updateDto);
     // Actualizar una categoria existente (Recibe id y UpdateCategoryDto, retorna el categoryDto actualizado o null).
