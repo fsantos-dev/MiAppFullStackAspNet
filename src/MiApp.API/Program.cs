@@ -1,41 +1,37 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// 1. Agregar controladores ( Necesario para usar  [ApiController] y las rutas)
+// Esto registra todos los controladores que creemos ( Incluyendo CategoriesController ).
+builder.Services.AddControllers();
+
+// 2. Configurar swagger para documentar la API.
+// swagger genera una interfaz vistual (/swagger) para probar los endpoints
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 3. Configurar el pipeline HTTP
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    // En desarrollo, mostramos Swagger UI (Interfaz gráfica )
+    app.UseSwagger();
+    app.UseSwaggerUI();
+
 }
 
-app.UseHttpsRedirection();
+// CORS debe ir antes de Authorization/MapControllers
+// app.UseCors("AllowAngularApp");
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.UseHttpsRedirection(); // Redirige HTPP a HTTPS ( Seguridad ).
+app.UseAuthorization(); // Por ahora no lo usamos, pero lo dejamos preparada para la Fase 3 ( JWT ).
+app.MapControllers(); // Mapea las rutas de los controladores (ej: /api/categories)
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+
