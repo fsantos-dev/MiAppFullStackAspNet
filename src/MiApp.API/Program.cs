@@ -1,3 +1,5 @@
+using MiApp.Application.Interfaces;
+using MiApp.Application.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,6 +15,12 @@ builder.Services.AddControllers();
 // swagger genera una interfaz vistual (/swagger) para probar los endpoints
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// 3. Inyección de Dependencias(Aplicando DIP de SOLID);
+// Registramos IcategoryService con su implementación CategoryService
+// AddScope crea una instancia por cada request HTTP (es el más común en APIs web)
+builder.Services.AddScoped<IcategoryService, CategoryService>();
+
 
 var app = builder.Build();
 
